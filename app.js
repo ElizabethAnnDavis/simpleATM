@@ -22,6 +22,10 @@ withdrawl.classList.add('cashOp2');
 const checkBalance = document.createElement('div');
 checkBalance.classList.add('bal');
 
+const userAmount = document.createElement('input');
+userAmount.type = "text";
+let amountEntered = 0;
+
 
 // Clears all elements from the screen
 function clearScreen(){
@@ -64,12 +68,28 @@ svAccnt.addEventListener('click', selectTransaction);
 // Allows user to "deposit" entered amount, n; Increases accntBalance by n
 function makeDeposit(){
     clearScreen();
+    
+    const depositData = document.createElement('div');
+    depositData.classList.add('dsplFormat');
+    const depositText = document.createElement('h1');
+    depositText.innerHTML = "DEPOSIT AMOUNT:"
+    depositData.appendChild(depositText);
+    screen.appendChild(depositData);
+    screen.appendChild(userAmount);
 }
 deposit.addEventListener('click', makeDeposit);
 
 // Allows user to "withdrawl" entered amount, n; Reduces accntBalance by n
 function makeWithdrawl(){
     clearScreen();
+
+    const withdrawlData = document.createElement('div');
+    withdrawlData.classList.add('dsplFormat');
+    const withdrawlText = document.createElement('h1');
+    withdrawlText.innerHTML = "WITHDRAWL AMOUNT:"
+    withdrawlData.appendChild(withdrawlText);
+    screen.appendChild(withdrawlData);
+    screen.appendChild(userAmount);
 }
 withdrawl.addEventListener('click', makeWithdrawl);
 
@@ -105,6 +125,7 @@ checkBalance.addEventListener('click', checkAccBalance);
 function triggerScreen(event){
     const pinPrompt = document.createElement('h1');
     pinPrompt.innerHTML = "ENTER YOUR PIN";
+    pinField.value = "";
     screen.appendChild(pinPrompt);
     screen.appendChild(pinField);
 }
@@ -124,9 +145,14 @@ numPad.addEventListener('click', populateTextField);
 // Cancel the transaction
 function cancelTransaction(event){
     clearScreen();
+
     const canceledText = document.createElement('h1');
     canceledText.classList.add('dsplFormat');
     canceledText.innerHTML = "TRANSACTION CANCLED";
     screen.appendChild(canceledText);
+
+    const continueText = document.createElement('h3');
+    continueText.innerHTML = "TAP CARD TO BEGIN";
+    screen.appendChild(continueText);
 }
 cancelKey.addEventListener('click', cancelTransaction);
