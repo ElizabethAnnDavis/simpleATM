@@ -33,6 +33,20 @@ function clearScreen(){
     screen.lastChild.remove();
 }
 
+// Transaction completed display screen
+function transactionComplete(){
+    clearScreen();
+
+    const completeText = document.createElement('h1');
+    complpeteText.classList.add('dsplFormat');
+    completeText.innerHTML = "TRANSACTION COMPLETE";
+    screen.appendChild(completeText);
+
+    const continueText = document.createElement('h3');
+    continueText.innerHTML = "TAP CARD TO BEGIN";
+    screen.appendChild(continueText);
+}
+
 // displays accounts for user to select between
 function selectAccount(){
     clearScreen();
@@ -65,8 +79,36 @@ function selectTransaction(event){
 ckAccnt.addEventListener('click', selectTransaction);
 svAccnt.addEventListener('click', selectTransaction);
 
+// Get the user entered value 
+function getVal(event){
+    if(event.target.textContent == 0 || event.target.textContent == 1 || event.target.textContent == 2 || event.target.textContent == 3 || event.target.textContent == 4 || event.target.textContent == 5 || event.target.textContent == 6 || event.target.textContent == 7 || event.target.textContent == 8 || event.target.textContent == 9){
+        userAmount.value += event.target.textContent;
+        amountEntered = Number(userAmount.value);
+    }
+}
+
+// Caculates the new balance after deposit
+function calIncreasedBal(event){
+    //clearScreen();
+    accntBalance = accntBalance + amountEntered;
+    transactionComplete();
+}
+
+// Caculates the new balance after 
+function calReducedBal(event){
+    //clearScreen();
+    if(accntBalance >= amountEntered){
+        accntBalance = accntBalance - amountEntered;
+        transactionComplete();
+    }else{
+        const insufficientFundsText = document.createElement('h1');
+        insufficientFundsText.classList.add('dsplFormat');
+        insufficientFundsText.innerHTML = "INSUFFICIENT FUNDS"
+    };
+}
+
 // Allows user to "deposit" entered amount, n; Increases accntBalance by n
-function makeDeposit(){
+function makeDeposit(event){
     clearScreen();
     
     const depositData = document.createElement('div');
@@ -76,11 +118,13 @@ function makeDeposit(){
     depositData.appendChild(depositText);
     screen.appendChild(depositData);
     screen.appendChild(userAmount);
+    numPad.addEventListener('click', getVal);
+    enterKey.addEventListener('click', calIncreasedBal);
 }
 deposit.addEventListener('click', makeDeposit);
 
 // Allows user to "withdrawl" entered amount, n; Reduces accntBalance by n
-function makeWithdrawl(){
+function makeWithdrawl(event){
     clearScreen();
 
     const withdrawlData = document.createElement('div');
@@ -90,6 +134,8 @@ function makeWithdrawl(){
     withdrawlData.appendChild(withdrawlText);
     screen.appendChild(withdrawlData);
     screen.appendChild(userAmount);
+    numPad.addEventListener('click', getVal);
+    enterKey.addEventListener('click', calReducedBal);
 }
 withdrawl.addEventListener('click', makeWithdrawl);
 
