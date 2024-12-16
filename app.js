@@ -26,6 +26,11 @@ const userAmount = document.createElement('input');
 userAmount.type = "text";
 let amountEntered = 0;
 
+let firstTransaction = true;
+
+let inDepo = false;
+let inWith = false;
+
 
 // Clears all elements from the screen
 function clearScreen(){
@@ -33,19 +38,33 @@ function clearScreen(){
     screen.lastChild.remove();
 }
 
+
 // Transaction completed display screen
 function transactionComplete(){
     clearScreen();
 
     const completeText = document.createElement('h1');
-    complpeteText.classList.add('dsplFormat');
+    completeText.classList.add('dsplFormat');
     completeText.innerHTML = "TRANSACTION COMPLETE";
     screen.appendChild(completeText);
 
-    const continueText = document.createElement('h3');
-    continueText.innerHTML = "TAP CARD TO BEGIN";
-    screen.appendChild(continueText);
+    const anotherTransaction = document.createElement('div');
+    const anotherTransactionText = document.createElement('h2');
+    anotherTransaction.innerHTML = "WOULD YOU LIKE TO DO ANOTHER TRANSACTION?";
+    const yesBtn = document.createElement('button');
+    yesBtn.innerHTML = "YES";
+    const noBtn = document.createElement('button');
+    noBtn.innerHTML = "NO";
+    
+    anotherTransaction.appendChild(anotherTransactionText);
+    anotherTransaction.appendChild(yesBtn);
+    anotherTransaction.appendChild(noBtn);
+    screen.appendChild(anotherTransaction);
+
+    yesBtn.addEventListener('click', selectAccount);
+    noBtn.addEventListener('click', clearScreen);
 }
+
 
 // displays accounts for user to select between
 function selectAccount(){
@@ -58,6 +77,7 @@ function selectAccount(){
 
     pinField.value = "";
 };
+
 
 // displays transactions for user to select between
 function selectTransaction(event){
@@ -79,38 +99,123 @@ function selectTransaction(event){
 ckAccnt.addEventListener('click', selectTransaction);
 svAccnt.addEventListener('click', selectTransaction);
 
+
 // Get the user entered value 
 function getVal(event){
-    if(event.target.textContent == 0 || event.target.textContent == 1 || event.target.textContent == 2 || event.target.textContent == 3 || event.target.textContent == 4 || event.target.textContent == 5 || event.target.textContent == 6 || event.target.textContent == 7 || event.target.textContent == 8 || event.target.textContent == 9){
+    if(/^\d+$/.test(event.target.textContent)){
         userAmount.value += event.target.textContent;
         amountEntered = Number(userAmount.value);
     }
 }
 
+
 // Caculates the new balance after deposit
 function calIncreasedBal(event){
     //clearScreen();
-    accntBalance = accntBalance + amountEntered;
-    transactionComplete();
+    console.log("inside calIncreadedBal function");
+    if(inWith){
+        console.log("inside calIncreadedBal function and inWith true");
+        return;
+    };
+
+    if(inDepo && !inWith){
+        console.log("inside calIncreadedBal function and inWith false, inDepo true");
+        accntBalance = accntBalance + amountEntered;
+        userAmount.value = "";
+        inDepo = false;
+        transactionComplete();
+    };
 }
+
 
 // Caculates the new balance after 
 function calReducedBal(event){
     //clearScreen();
-    if(accntBalance >= amountEntered){
+    console.log("inside calReducededBal function");
+    if(inDepo){
+        console.log("inside calReducedBal function and inDepo true");
+        return;
+    };
+
+    if(!inDepo && inWith){
+        if(accntBalance >= amountEntered){
+            console.log("inside calReducedBal function and inWith true, inDepo false");
+            console.log("ACCOUNT BALANCE: " + accntBalance);
+            console.log(amountEntered);
+            accntBalance = accntBalance - amountEntered;
+            console.log("ACCOUNT BALANCE: " + accntBalance);
+            userAmount.value = "";
+            inWith = false;
+            transactionComplete();
+        }else{
+            userAmount.value = "";
+            clearScreen();
+    
+            const insufficientFundsText = document.createElement('h1');
+            insufficientFundsText.classList.add('dsplFormat');
+            insufficientFundsText.innerHTML = "INSUFFICIENT FUNDS"
+    
+            const anotherTransaction = document.createElement('div');
+            const anotherTransactionText = document.createElement('h2');
+            anotherTransaction.innerHTML = "WOULD YOU LIKE TO TRY ANOTHER AMOUNT?";
+            const yesBtn = document.createElement('button');
+            yesBtn.innerHTML = "YES";
+            const noBtn = document.createElement('button');
+            noBtn.innerHTML = "NO";
+            
+            anotherTransaction.appendChild(anotherTransactionText);
+            anotherTransaction.appendChild(yesBtn);
+            anotherTransaction.appendChild(noBtn);
+    
+            screen.appendChild(insufficientFundsText);
+            screen.appendChild(anotherTransaction);
+            
+            yesBtn.addEventListener('click', makeWithdrawl);
+            noBtn.addEventListener('click', cancelTransaction);
+        };
+    };
+
+    
+    /*if(accntBalance >= amountEntered){
+        console.log("made it here");
+        console.log("ACCOUNT BALANCE: " + accntBalance);
+        console.log(amountEntered);
         accntBalance = accntBalance - amountEntered;
+        console.log("ACCOUNT BALANCE: " + accntBalance);
         transactionComplete();
     }else{
+        clearScreen();
+
         const insufficientFundsText = document.createElement('h1');
         insufficientFundsText.classList.add('dsplFormat');
         insufficientFundsText.innerHTML = "INSUFFICIENT FUNDS"
-    };
+
+        const anotherTransaction = document.createElement('div');
+        const anotherTransactionText = document.createElement('h2');
+        anotherTransaction.innerHTML = "WOULD YOU LIKE TO TRY ANOTHER AMOUNT?";
+        const yesBtn = document.createElement('button');
+        yesBtn.innerHTML = "YES";
+        const noBtn = document.createElement('button');
+        noBtn.innerHTML = "NO";
+        
+        anotherTransaction.appendChild(anotherTransactionText);
+        anotherTransaction.appendChild(yesBtn);
+        anotherTransaction.appendChild(noBtn);
+
+        screen.appendChild(insufficientFundsText);
+        screen.appendChild(anotherTransaction);
+        
+        yesBtn.addEventListener('click', makeWithdrawl);
+        noBtn.addEventListener('click', cancelTransaction);
+    };*/
 }
+
 
 // Allows user to "deposit" entered amount, n; Increases accntBalance by n
 function makeDeposit(event){
     clearScreen();
-    
+    inDepo = true;
+    console.log("in makeDepsit function");
     const depositData = document.createElement('div');
     depositData.classList.add('dsplFormat');
     const depositText = document.createElement('h1');
@@ -123,10 +228,11 @@ function makeDeposit(event){
 }
 deposit.addEventListener('click', makeDeposit);
 
+
 // Allows user to "withdrawl" entered amount, n; Reduces accntBalance by n
 function makeWithdrawl(event){
     clearScreen();
-
+    inWith = true;
     const withdrawlData = document.createElement('div');
     withdrawlData.classList.add('dsplFormat');
     const withdrawlText = document.createElement('h1');
@@ -139,6 +245,7 @@ function makeWithdrawl(event){
 }
 withdrawl.addEventListener('click', makeWithdrawl);
 
+
 // Check the account balance
 function checkAccBalance(event){
     clearScreen();
@@ -146,6 +253,7 @@ function checkAccBalance(event){
     const displayBalance = document.createElement('h1');
     displayBalance.classList.add('dsplFormat');
     displayBalance.innerHTML = `ACCOUNT BALANCE: $${accntBalance}`;
+    console.log("ACCOUNT BALANCE: " + accntBalance);
     screen.appendChild(displayBalance);
 
     const anotherTransaction = document.createElement('div');
@@ -155,38 +263,48 @@ function checkAccBalance(event){
     yesBtn.innerHTML = "YES";
     const noBtn = document.createElement('button');
     noBtn.innerHTML = "NO";
+
     anotherTransaction.appendChild(anotherTransactionText);
     anotherTransaction.appendChild(yesBtn);
     anotherTransaction.appendChild(noBtn);
     screen.appendChild(anotherTransaction);
 
     yesBtn.addEventListener('click', selectAccount);
-    //enterKey.addEventListener('click', selectAccount);
-    noBtn.addEventListener('click', clearScreen);
-    //cancelKey.addEventListener('click', clearScreen);
+    enterKey.addEventListener('click', selectAccount);
+    noBtn.addEventListener('click', triggerScreen);
+    cancelKey.addEventListener('click', triggerScreen);
 }
 checkBalance.addEventListener('click', checkAccBalance);
 
+
 // Initial screen display; Displays prompt asking for user pin
 function triggerScreen(event){
+    if(!firstTransaction){
+        clearScreen();
+    }
     const pinPrompt = document.createElement('h1');
     pinPrompt.innerHTML = "ENTER YOUR PIN";
     pinField.value = "";
     screen.appendChild(pinPrompt);
     screen.appendChild(pinField);
+    firstTransaction = false;
 }
 cardReader.addEventListener('click', triggerScreen);
+
 
 // Fills text field with up to 4 asterisks; Once filled, triggers account selection screen  
 function populateTextField(event){
     if(pinField.value.length < 4){
-        pinField.value += "*";
+        if(/^\d+$/.test(event.target.textContent)){
+            pinField.value += "*"; // don't want this to populate if pinField isn't onscreen
+        }
     };
     if(pinField.value.length === 4){
-        enterKey.addEventListener('click', selectAccount);
+        enterKey.addEventListener('click', selectAccount); // needs turned off after the click event 
     };
 }
 numPad.addEventListener('click', populateTextField);
+
 
 // Cancel the transaction
 function cancelTransaction(event){
