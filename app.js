@@ -105,21 +105,17 @@ function getVal(event){
     if(/^\d+$/.test(event.target.textContent)){
         userAmount.value += event.target.textContent;
         amountEntered = Number(userAmount.value);
-    }
+    };
 }
 
 
 // Caculates the new balance after deposit
 function calIncreasedBal(event){
-    //clearScreen();
-    console.log("inside calIncreadedBal function");
     if(inWith){
-        console.log("inside calIncreadedBal function and inWith true");
         return;
     };
 
     if(inDepo && !inWith){
-        console.log("inside calIncreadedBal function and inWith false, inDepo true");
         accntBalance = accntBalance + amountEntered;
         userAmount.value = "";
         inDepo = false;
@@ -130,20 +126,13 @@ function calIncreasedBal(event){
 
 // Caculates the new balance after 
 function calReducedBal(event){
-    //clearScreen();
-    console.log("inside calReducededBal function");
     if(inDepo){
-        console.log("inside calReducedBal function and inDepo true");
         return;
     };
 
     if(!inDepo && inWith){
         if(accntBalance >= amountEntered){
-            console.log("inside calReducedBal function and inWith true, inDepo false");
-            console.log("ACCOUNT BALANCE: " + accntBalance);
-            console.log(amountEntered);
             accntBalance = accntBalance - amountEntered;
-            console.log("ACCOUNT BALANCE: " + accntBalance);
             userAmount.value = "";
             inWith = false;
             transactionComplete();
@@ -174,40 +163,6 @@ function calReducedBal(event){
             noBtn.addEventListener('click', cancelTransaction);
         };
     };
-
-    
-    /*if(accntBalance >= amountEntered){
-        console.log("made it here");
-        console.log("ACCOUNT BALANCE: " + accntBalance);
-        console.log(amountEntered);
-        accntBalance = accntBalance - amountEntered;
-        console.log("ACCOUNT BALANCE: " + accntBalance);
-        transactionComplete();
-    }else{
-        clearScreen();
-
-        const insufficientFundsText = document.createElement('h1');
-        insufficientFundsText.classList.add('dsplFormat');
-        insufficientFundsText.innerHTML = "INSUFFICIENT FUNDS"
-
-        const anotherTransaction = document.createElement('div');
-        const anotherTransactionText = document.createElement('h2');
-        anotherTransaction.innerHTML = "WOULD YOU LIKE TO TRY ANOTHER AMOUNT?";
-        const yesBtn = document.createElement('button');
-        yesBtn.innerHTML = "YES";
-        const noBtn = document.createElement('button');
-        noBtn.innerHTML = "NO";
-        
-        anotherTransaction.appendChild(anotherTransactionText);
-        anotherTransaction.appendChild(yesBtn);
-        anotherTransaction.appendChild(noBtn);
-
-        screen.appendChild(insufficientFundsText);
-        screen.appendChild(anotherTransaction);
-        
-        yesBtn.addEventListener('click', makeWithdrawl);
-        noBtn.addEventListener('click', cancelTransaction);
-    };*/
 }
 
 
@@ -215,7 +170,6 @@ function calReducedBal(event){
 function makeDeposit(event){
     clearScreen();
     inDepo = true;
-    console.log("in makeDepsit function");
     const depositData = document.createElement('div');
     depositData.classList.add('dsplFormat');
     const depositText = document.createElement('h1');
@@ -253,7 +207,6 @@ function checkAccBalance(event){
     const displayBalance = document.createElement('h1');
     displayBalance.classList.add('dsplFormat');
     displayBalance.innerHTML = `ACCOUNT BALANCE: $${accntBalance}`;
-    console.log("ACCOUNT BALANCE: " + accntBalance);
     screen.appendChild(displayBalance);
 
     const anotherTransaction = document.createElement('div');
@@ -279,6 +232,7 @@ checkBalance.addEventListener('click', checkAccBalance);
 
 // Initial screen display; Displays prompt asking for user pin
 function triggerScreen(event){
+    console.log(firstTransaction);
     if(!firstTransaction){
         clearScreen();
     }
@@ -318,6 +272,8 @@ function cancelTransaction(event){
     const continueText = document.createElement('h3');
     continueText.innerHTML = "TAP CARD TO BEGIN";
     screen.appendChild(continueText);
+
+    cardReader.addEventListener('click', triggerScreen);
 }
 cancelKey.addEventListener('click', cancelTransaction);
 
