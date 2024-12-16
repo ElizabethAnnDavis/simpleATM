@@ -62,7 +62,7 @@ function transactionComplete(){
     screen.appendChild(anotherTransaction);
 
     yesBtn.addEventListener('click', selectAccount);
-    noBtn.addEventListener('click', clearScreen);
+    noBtn.addEventListener('click', resetScreen);
 }
 
 
@@ -320,3 +320,8 @@ function cancelTransaction(event){
     screen.appendChild(continueText);
 }
 cancelKey.addEventListener('click', cancelTransaction);
+
+function resetScreen(e){
+    clearScreen();
+    triggerScreen(e);
+}
