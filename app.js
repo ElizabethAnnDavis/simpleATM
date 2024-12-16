@@ -36,6 +36,7 @@ let inWith = false;
 function clearScreen(){
     inDepo = false;
     inWith = false;
+    userAmount.value = "";
     screen.firstChild.remove();
     screen.lastChild.remove();
 }
