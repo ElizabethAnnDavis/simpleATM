@@ -34,6 +34,8 @@ let inWith = false;
 
 // Clears all elements from the screen
 function clearScreen(){
+    inDepo = false;
+    inWith = false;
     screen.firstChild.remove();
     screen.lastChild.remove();
 }
@@ -230,6 +232,20 @@ function checkAccBalance(event){
 checkBalance.addEventListener('click', checkAccBalance);
 
 
+// Fills text field with up to 4 asterisks; Once filled, triggers account selection screen  
+function populateTextField(event){
+    if(pinField.value.length < 4){
+        if(/^\d+$/.test(event.target.textContent)){
+            pinField.value += "*"; // don't want this to populate if pinField isn't onscreen
+        }
+    };
+    if(pinField.value.length === 4){
+        enterKey.addEventListener('click', selectAccount); // needs turned off after the click event 
+    };
+}
+numPad.addEventListener('click', populateTextField);
+
+
 // Initial screen display; Displays prompt asking for user pin
 function triggerScreen(event){
     console.log(firstTransaction);
@@ -244,20 +260,6 @@ function triggerScreen(event){
     firstTransaction = false;
 }
 cardReader.addEventListener('click', triggerScreen);
-
-
-// Fills text field with up to 4 asterisks; Once filled, triggers account selection screen  
-function populateTextField(event){
-    if(pinField.value.length < 4){
-        if(/^\d+$/.test(event.target.textContent)){
-            pinField.value += "*"; // don't want this to populate if pinField isn't onscreen
-        }
-    };
-    if(pinField.value.length === 4){
-        enterKey.addEventListener('click', selectAccount); // needs turned off after the click event 
-    };
-}
-numPad.addEventListener('click', populateTextField);
 
 
 // Cancel the transaction
